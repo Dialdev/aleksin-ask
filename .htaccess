@@ -1,0 +1,93 @@
+# For full documentation and other suggested options, please see
+# http://svn.modxcms.com/docs/display/MODx096/Friendly+URL+Solutions
+# including for unexpected logouts in multi-server/cloud environments
+# and especially for the first three commented out rules
+
+#php_flag register_globals Off
+AddDefaultCharset utf-8
+#php_value date.timezone Europe/Moscow
+
+#Options +FollowSymlinks
+RewriteEngine On
+RewriteBase /
+
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /index\.php\ HTTP
+RewriteRule ^index\.php$ http://aleksin-ask.ru/ [R=301,L]
+
+RewriteCond %{HTTP_HOST} ^aleksin-ask.ru
+RewriteRule (.*) http://www.aleksin-ask.ru/$1 [R=301,L]
+
+# Fix Apache internal dummy connections from breaking [(site_url)] cache
+RewriteCond %{HTTP_USER_AGENT} ^.*internal\ dummy\ connection.*$ [NC]
+RewriteRule .* - [F,L]
+
+############################################################################
+#### Убираем повторяющиеся слеши (/) в URL                              ####
+############################################################################
+RewriteCond %{THE_REQUEST} //
+   # Проверяем, повторяется ли слеш (//) более двух раз.
+RewriteRule .* /$0 [R=301,L]
+   # Исключаем все лишние слеши.
+
+#redirect http to https
+#RewriteCond %{HTTP:SSL} !=1 [NC]
+#RewriteRule ^(.*) https://%{SERVER_NAME}/$1 [L,R=301]
+
+# Rewrite domain.com -> www.domain.com -- used with SEO Strict URLs plugin
+#RewriteCond %{HTTP_HOST} .
+#RewriteCond %{HTTP_HOST} !^www\.aleksin-ask\.ru [NC]
+#RewriteRule (.*) http://www.aleksin-ask.ru/$1 [R=301,L]
+
+# without www
+#RewriteCond %{HTTP_HOST} .
+#RewriteCond %{HTTP_HOST} !^example\.com [NC]
+#RewriteRule (.*) http://example.com/$1 [R=301,L]
+
+RewriteRule ^metalicheskie-gofrirovannye-truby.html$ http://www.aleksin-ask.ru/gofrirovannye-truby.html [R=301,NC,L]
+
+RewriteRule ^vodopropusknye-truby.html$ http://www.aleksin-ask.ru/metalicheskie-gofrirovannye-truby.html [R=301,NC,L]
+RewriteRule ^kruglye-vodopropusknye-truby.html$ http://www.aleksin-ask.ru/metalicheskie-gofrirovannye-truby.html [R=301,NC,L]
+RewriteRule ^vodopropusknye-truby-pod-avtomobilnymi-dorogami.html$ http://www.aleksin-ask.ru/metalicheskie-gofrirovannye-truby.html [R=301,NC,L]
+RewriteRule ^gofrirovannye-vodopropusknye-truby.html$ http://www.aleksin-ask.ru/metalicheskie-gofrirovannye-truby.html [R=301,NC,L]
+
+RewriteRule ^produkciya-po-primeneniyu.html$ http://www.aleksin-ask.ru/gofrokonstrukcii.html [R=301,NC,L]
+
+RewriteRule ^trossovye-dorozhnye-ograzhdeniya.html$ http://www.aleksin-ask.ru/statya-trossovye-dorozhnye-ograzhdeniya.html [R=301,NC,L]
+
+
+
+# without www  all domian
+#RewriteCond %{HTTP_HOST} .
+#RewriteCond %{HTTP_HOST} ^www.(.*)$ [NC]
+#RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
+
+# Exclude /assets and /manager directories and images from rewrite rules
+RewriteRule ^(manager|assets|js|css|images|img)/.*$ - [L]
+RewriteRule \.(jpg|jpeg|png|gif|ico)$ - [L]
+
+# For Friendly URLs
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?q=$1 [L,QSA]
+
+# Reduce server overhead by enabling output compression if supported.
+#php_flag zlib.output_compression On
+#php_value zlib.output_compression_level 5
+
+<IfModule mod_expires.c>
+  <FilesMatch \.(gif|png|svg|js|jpg|jpeg|ogg|mp4|mkv|flv|swf|wmv|asf|asx|wma|wax|wmx|wm)$>
+    ExpiresDefault "access plus 1 year"
+  </FilesMatch>
+  ExpiresActive on
+  ExpiresByType image/jpeg "access plus 7 day"
+  ExpiresByType image/gif "access plus 7 day"
+  ExpiresByType image/png "access plus 7 day"
+
+  <FilesMatch \.(css|js)$>
+    ExpiresDefault "access plus 1 year"
+  </FilesMatch>
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType text/javascript "access plus 1 year"
+</IfModule>
+ 
